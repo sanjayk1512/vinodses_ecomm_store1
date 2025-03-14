@@ -6,7 +6,7 @@ pipeline {
         IMAGE_TAG = "latest"
         DOCKER_CREDENTIALS_ID = "docker-hub-credentials" // Add your Docker Hub credentials in Jenkins
         KUBE_CONFIG = "$HOME/.kube/config"
-        DEPLOYMENT_FILE = "k8s/frontend-deployment.yaml"
+        DEPLOYMENT_FILE = "k8s-FE/Deployment.yml"
     }
 
     stages {
