@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Darin40/vinodses_ecomm_store.git'
+                 git branch: 'main', url: 'https://github.com/Darin40/01_products_api.git'
             }
         }
 
