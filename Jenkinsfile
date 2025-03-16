@@ -6,7 +6,7 @@ pipeline {
         IMAGE_TAG = "latest"
         DOCKER_CREDENTIALS_ID = "docker-hub-credentials"
         KUBE_CONFIG = "$HOME/.kube/config"
-        DEPLOYMENT_FILE = "k8s-FE/Deployment.yml"
+        DEPLOYMENT_FILE = "/var/lib/jenkins/workspace/k8s-FE/Deployment.yml"
     }
 
     stages {
