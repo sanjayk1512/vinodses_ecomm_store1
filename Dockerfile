@@ -1,4 +1,3 @@
-# Build Stage
 FROM node:18 AS build
 
 WORKDIR /app
@@ -7,17 +6,18 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . . 
+COPY . .
 
-RUN npm run build
+RUN npm run build --prod
 
-# Change nginx stage to serve Angular/Vue/React frontend properly
 FROM nginx:alpine
 
-# Add a custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Copy the correct build folder (Check your dist folder name)
+# Copy the built Angular app to Nginx's HTML directory
 COPY --from=build /app/dist/ecommerce_frontend /usr/share/nginx/html
 
+# Copy the custom nginx.conf file
+COPY nginx.conf /etc/nginx/nginx.conf
+
 EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
