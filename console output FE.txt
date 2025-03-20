@@ -1,0 +1,182 @@
+Started by user darin
+Obtained Jenkinsfile from git https://github.com/Darin40/vinodses_ecomm_store.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/k8s-FE
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/k8s-FE/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Darin40/vinodses_ecomm_store.git # timeout=10
+Fetching upstream changes from https://github.com/Darin40/vinodses_ecomm_store.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/Darin40/vinodses_ecomm_store.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 456dc705bc694c14299942c65e2a3e9e5af39a2b (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 456dc705bc694c14299942c65e2a3e9e5af39a2b # timeout=10
+Commit message: "Update nginx.conf"
+ > git rev-list --no-walk 456dc705bc694c14299942c65e2a3e9e5af39a2b # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Git Clone)
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/k8s-FE/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Darin40/vinodses_ecomm_store.git # timeout=10
+Fetching upstream changes from https://github.com/Darin40/vinodses_ecomm_store.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/Darin40/vinodses_ecomm_store.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 456dc705bc694c14299942c65e2a3e9e5af39a2b (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 456dc705bc694c14299942c65e2a3e9e5af39a2b # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D main # timeout=10
+ > git checkout -b main 456dc705bc694c14299942c65e2a3e9e5af39a2b # timeout=10
+Commit message: "Update nginx.conf"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Docker Image)
+[Pipeline] sh
++ docker build -t darin04/frontend-ecomm:latest .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  344.2MB
+
+Step 1/11 : FROM node:18 AS build
+ ---> 512bc7f93b1c
+Step 2/11 : WORKDIR /app
+ ---> Using cache
+ ---> 20cc568d52d7
+Step 3/11 : COPY package*.json ./
+ ---> Using cache
+ ---> fa3442a3f2ee
+Step 4/11 : RUN npm install
+ ---> Using cache
+ ---> abc4609f9675
+Step 5/11 : COPY . .
+ ---> 08012d50fd06
+Step 6/11 : RUN npm run build --prod
+ ---> Running in ab4d31a298cf
+[91mnpm warn config production Use `--omit=dev` instead.
+[0m
+> ecommerce-frontend@0.0.0 build
+> ng build
+
+❯ Building...
+✔ Building...
+Initial chunk files   | Names         |  Raw size | Estimated transfer size
+styles-K4T2OTRN.css   | styles        | 304.01 kB |                40.91 kB
+main-4ZUUKQU6.js      | main          | 255.49 kB |                67.81 kB
+polyfills-FFHMD2TL.js | polyfills     |  34.52 kB |                11.28 kB
+
+                      | Initial total | 594.03 kB |               120.00 kB
+
+Application bundle generation complete. [9.300 seconds]
+
+[91m▲ [WARNING] bundle initial exceeded maximum budget. Budget 512.00 kB was not met by 82.03 kB with a total of 594.03 kB.
+
+
+[0mOutput location: /app/dist/ecommerce_frontend
+
+ ---> Removed intermediate container ab4d31a298cf
+ ---> 23fcbf4563e4
+Step 7/11 : FROM nginx:alpine
+ ---> 1ff4bb4faebc
+Step 8/11 : COPY --from=build /app/dist/ecommerce_frontend /usr/share/nginx/html
+ ---> Using cache
+ ---> fea17cecfbab
+Step 9/11 : COPY nginx.conf /etc/nginx/nginx.conf
+ ---> Using cache
+ ---> 64d59b8c6208
+Step 10/11 : EXPOSE 80
+ ---> Using cache
+ ---> 5a5ed2c53a02
+Step 11/11 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Using cache
+ ---> 0ef3e6db7e34
+Successfully built 0ef3e6db7e34
+Successfully tagged darin04/frontend-ecomm:latest
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push Docker Image)
+[Pipeline] withDockerRegistry
+Using the existing docker config file.
+Removing blacklisted property: auths
+$ docker login -u darin04 -p ******** https://index.docker.io/v1/
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+WARNING! Your password will be stored unencrypted in /var/lib/jenkins/workspace/k8s-FE@tmp/af9cfca7-060f-48f6-b6ab-9aff69c4f5fc/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[Pipeline] {
+[Pipeline] sh
++ docker push darin04/frontend-ecomm:latest
+The push refers to repository [docker.io/darin04/frontend-ecomm]
+f4506254efa3: Preparing
+31a3b5aea986: Preparing
+c18897d5e3dd: Preparing
+9af9e76ea07f: Preparing
+f1f70b13aacc: Preparing
+252b6db79fae: Preparing
+c9ce8cb4e76a: Preparing
+8f3c313eb124: Preparing
+c1761f3c364a: Preparing
+08000c18d16d: Preparing
+252b6db79fae: Waiting
+c9ce8cb4e76a: Waiting
+8f3c313eb124: Waiting
+c1761f3c364a: Waiting
+08000c18d16d: Waiting
+9af9e76ea07f: Layer already exists
+f1f70b13aacc: Layer already exists
+31a3b5aea986: Layer already exists
+c18897d5e3dd: Layer already exists
+f4506254efa3: Layer already exists
+252b6db79fae: Layer already exists
+c9ce8cb4e76a: Layer already exists
+8f3c313eb124: Layer already exists
+c1761f3c364a: Layer already exists
+08000c18d16d: Layer already exists
+latest: digest: sha256:35ec8f54294c9ebf0fa4e8a59fa8d9bdff27e9846cc04a6410a5c159413a89e2 size: 2407
+[Pipeline] }
+[Pipeline] // withDockerRegistry
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Kubernetes)
+[Pipeline] sh
++ kubectl apply -f /var/lib/jenkins/workspace/k8s-FE/Deployment.yml
+deployment.apps/frontend-ecomm unchanged
+service/frontend-ecomm-service unchanged
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
