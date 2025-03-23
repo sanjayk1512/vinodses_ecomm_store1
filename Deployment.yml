@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: frontend-ecomm
-        image: darin04/frontend-ecomm:latest
+        image: sanjayk062/frontend-ecomm:latest
         ports:
         - containerPort: 80
 ---
