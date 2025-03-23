@@ -1,3 +1,3 @@
 export const Constants = {
-    BACKEND_API_URL: 'http://aa8b231f0015f4d209a78d58ad391485-341218138.ap-south-1.elb.amazonaws.com',
+    BACKEND_API_URL: 'http://database-1.c3kaay88gbjs.ap-south-1.rds.amazonaws.com',
 };
