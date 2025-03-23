@@ -1,40 +1,35 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = "darin04/frontend-ecomm"
-        IMAGE_TAG = "latest"
-        DOCKER_CREDENTIALS_ID = "docker-hub-credentials"
-        KUBE_CONFIG = "$HOME/.kube/config"
-        DEPLOYMENT_FILE = "/var/lib/jenkins/workspace/k8s-FE/Deployment.yml"
-    }
-
     stages {
+        stage('Git clone') {
+            steps {
+               git branch: 'main', url: 'https://github.com/sanjayk1512/vinodses_ecomm_store1.git'
+            }
+        }
         
-        stage('Git Clone') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Darin40/vinodses_ecomm_store.git'
+        stage('Docker Image'){
+            steps{
+                sh 'docker build -t sanjayk062/ecomm_store .'
             }
         }
-
-        stage('Build Docker Image') {
-            steps {
-                sh "docker build -t $DOCKER_IMAGE:$IMAGE_TAG ."
+        
+       stage('Docker Image push'){
+            steps{
+            withCredentials([string(credentialsId: 'docker_pwd', variable: 'docker_pwd')]) {
+                   sh 'docker login -u sanjayk062 -p ${docker_pwd}'
+                   sh 'docker push sanjayk062/ecomm_store'
+            }
             }
         }
-
-        stage('Push Docker Image') {
-            steps {
-                withDockerRegistry([credentialsId: DOCKER_CREDENTIALS_ID, url: 'https://index.docker.io/v1/']) {
-                    sh "docker push $DOCKER_IMAGE:$IMAGE_TAG"
-                }
+        
+         stage('k8s deployment'){
+            steps{
+             sh 'kubectl apply -f Deployment.yml'
+             sh 'kubectl get svc'
             }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh "kubectl apply -f $DEPLOYMENT_FILE"
-            }
-        }
+        }  
+        
+        
     }
 }
